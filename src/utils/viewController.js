@@ -1,0 +1,150 @@
+
+export class TypeIsUtil {
+  isUndefined(val){
+    return val === undefined
+  }
+  
+  isString(str){
+    return Object.prototype.toString.call(str) === "[object String]"
+  }
+  
+  isNumber(num){
+    return typeof num === 'number'
+  }
+  
+  isSymbol(sym){
+    return typeof sym === 'symbol'
+  }
+  
+  isBigInt(big){
+    return typeof big === 'bigint'
+  }
+  
+  isNull(val){
+    return val === null
+  }
+  
+  isObject(obj){
+    return Object.prototype.toString.call(obj) === '[object Object]'
+  }
+  
+  isArray(arr){
+    return Object.prototype.toString.call(arr) === '[object Array]'
+  }
+  
+  isFunction(fn){
+    return Object.prototype.toString.call(fn) === '[object Function]'
+  }
+}
+
+const typeUtil = new TypeIsUtil()
+
+export class ViewController {
+  moduleName = ''
+  pageName = ''
+  fields = {}
+  config = {}
+  views = {}
+  attrs = {}
+  events = {}
+  constructor(moduleName, configMap={}, pageName = undefined){
+    this.moduleName = moduleName
+    this.pageName = typeUtil.isUndefined(pageName) ? moduleName : pageName
+    this.fields = configMap[moduleName].fields 
+    this.config = typeUtil.isUndefined(configMap[moduleName][pageName]) ? {} : configMap[moduleName][pageName]
+    this.views = this.config.views || {}
+    this.attrs = this.config.attrs || {}
+    this.events = this.config.events || {}
+  }
+  /**
+   * 用于为vue的data实例初始化属性
+   * @param {对象} rtn 
+   * @returns
+   */
+  bindAttrToInstance(rtn){
+    rtn.moduleName = this.moduleName
+    rtn.pageName = this.pageName
+    rtn.fields = this.fields
+    rtn.config = this.config
+    rtn.views = this.views
+    rtn.attrs = this.attrs
+    rtn.events = this.events
+    rtn.dynamicElementData = {}  // 用于记录动态获取的选项数据
+    rtn.fieldsAttrs = {}  // 用于记录当前视图中相关字段的attrs
+    rtn.fieldsEvents = {} // 用于记录当前视图中相关字段的events
+    return rtn
+  }
+
+  /**
+   * 获取表格视图的字段配置项信息
+   * @param {表格视图中需要展示的字段名称  值为String类型时，从views配置中取值生成配置信息 值为Array类型时，直接用该值生成配置信息} _viewFieldsList 
+   * @param {表格视图中需要展示的字段的额外配置属性 值为String类型时，从view视图中取值  值为Object类型时，直接使用该值处理视图的额外属性} _viewFieldsAttr 
+   * @returns 
+   */
+  getTableColumnConfig(_viewFieldsList = 'tableFields', _viewFieldsAttr = 'tableFieldsAttr'){
+    const { views , fields } = this
+    const viewFields = typeUtil.isArray(_viewFieldsList) ? _viewFieldsList : (views[_viewFieldsList] || [])
+    const fieldsAttrs = typeUtil.isObject(_viewFieldsAttr) ? _viewFieldsAttr : (views[_viewFieldsAttr] || {})
+    const rtn = viewFields.map( fieldName => {
+      // 从fields配置中获取到的字段配置信息 ，如poster: { type: 'imageUploader', label: '上传轮播图' } 这是编写的基础配置信息,表示用该字段在form中的视图是一个图片上传控件
+      const fieldConfig = fields[fieldName] || {}
+      // 针对table中有特殊展示需求的字段配置信息，如poster: { label: '轮播图' , slot: 'image' } 一般table中默认展示文本，这里需要使用image控件展示数据，切label变更为轮播图
+      const assignConfig = fieldsAttrs[fieldName] || {} 
+      return Object.assign(fieldConfig, assignConfig) // {type: 'imageUploader', label: '轮播图' , slot: 'image'} // 最终生成一个在table中展示时需要的有效配置信息对象
+    })
+
+    return rtn
+  }
+
+  /**
+   * 在vue实例中通过call调用 根据配置信息生成校验规则
+   * @param {String：用于指定字段集合在配置中的配置项名称 || Array：为字段集合列表} _fieldsName 
+   * @param {Object：指定不使用默认规则时，字段为空的提示语句 {fieldName：提示语句}} _fieldRequiredNotice 
+   * @param {String：使用哪一个配置项赋值校验规则,默认用于从fields配置项的对应字段中读取校验规则，rulesInField为false时则用config中的对应配置获取校验规则} _rules 
+   * @param {Boolean：是否从fields对应字段配置中获取校验规则，默认为true} rulesInField 
+   * @returns 
+   */
+  getFieldsRules(_fieldsName,_fieldRequiredNotice={},_rules='rules',rulesInField=true){
+    const { fields , views } = this  // 字段配置项 视图配置项
+    const rules = {}
+    // 需要添加校验规则的字段列表，直接传入或者
+    const addRuleFields = typeUtil.isArray(_fieldsName) ? _fieldsName : views[_fieldsName]
+    if(rulesInField){  // 用字段配置项中配置的校验规则列表初始化字段的校验规则
+      addRuleFields.forEach(fieldName=>{
+        let fieldRules = []
+        rules[fieldName] = fieldRules
+        let fieldRulesName = fields[fieldName][_rules] || []
+        fieldRulesName.forEach(r=>{
+          if(r==='required'){
+            fieldRules.push({
+              required: true,
+              message: _fieldRequiredNotice[fieldName]?_fieldRequiredNotice[fieldName]:`${fields[fieldName].type==='input'?'请填写':'请选择'}${fields[fieldName].label}`,
+              trigger: `${fields[fieldName].type==='input'?'blur':'change'}`
+            })
+          }else{
+            fieldRules.push(this.mixinRules[r])
+          }
+        })
+      })
+    }else{ // 用config配置项中的配置信息初始化校验规则
+      const fieldsRules = this.config[_rules] || {}
+      addRuleFields.forEach(fieldName=>{
+        let fieldRules = []
+        rules[fieldName] = fieldRules
+        let fieldRulesName = fieldsRules[fieldName] || []
+        fieldRulesName.forEach(r=>{
+          if(r==='required'){
+            fieldRules.push({
+              required: true,
+              message: _fieldRequiredNotice[fieldName]?_fieldRequiredNotice[fieldName]:`${fields[fieldName].type==='input'?'请填写':'请选择'}${fields[fieldName].label}`,
+              trigger: `${fields[fieldName].type==='input'?'blur':'change'}`
+            })
+          }else{
+            fieldRules.push(this.mixinRules[r])
+          }
+        })
+      })
+    }
+    return rules
+  }
+}
