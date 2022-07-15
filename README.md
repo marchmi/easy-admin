@@ -14,3 +14,7 @@ npm run dev
 // 构建
 npm run build
 ```
+
+## License
+
+[MIT](https://github.com/marchmi/easy-admin/blob/main/LICENSE)
