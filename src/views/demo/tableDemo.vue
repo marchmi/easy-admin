@@ -56,11 +56,6 @@
             <template  #default="{ row }">
             <!-- 配置了dynamic的字段进行展示 -->
               <template v-if="field.dynamic">
-                <!-- <dynamic-view-loader
-                  :data="row[field.name]"
-                  :type="field.type"
-                  :options="dynamicElementData[field.name]"
-                ></dynamic-view-loader> -->
                 <dynamic-view-loader
                   :data="row[field.name]"
                   :type="field.type"
