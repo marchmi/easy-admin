@@ -98,7 +98,7 @@ export class ViewController {
         const fieldConfig = fields[fieldName] || {}
         // 针对table中有特殊展示需求的字段配置信息，如poster: { label: '轮播图' , slot: 'image' } 一般table中默认展示文本，这里需要使用image控件展示数据，切label变更为轮播图
         const assignConfig = fieldsAttrs[fieldName] || {}
-        return Object.assign(fieldConfig, assignConfig) // {type: 'imageUploader', label: '轮播图' , slot: 'image'} // 最终生成一个在table中展示时需要的有效配置信息对象
+        return Object.assign(fieldConfig, assignConfig, {name:fieldName}) // {type: 'imageUploader', label: '轮播图' , slot: 'image'} // 最终生成一个在table中展示时需要的有效配置信息对象
       })
 
       return rtn
@@ -155,4 +155,17 @@ export class ViewController {
       }
       return rules
     }
+}
+
+/**
+ * 格式化数据
+ * @param {数据集合，在table中时为scope.row,在表单中时为详情信息} row 
+ * @param {字段信息} field 
+ * @returns 
+ */
+export function formatValue(row,field){
+  if(!field.filter){
+    return row[field.name]
+  }
+  return this[field.filter] ? this[field.filter](row[field.name],row) : '-'
 }
