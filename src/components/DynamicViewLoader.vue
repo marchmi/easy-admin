@@ -12,6 +12,7 @@ import Input from './async-components/input'
 import Textarea from './async-components/textarea'
 import Select from './async-components/select'
 import Checkbox from './async-components/checkbox'
+import UnRegister from './async-components/unregister.vue'
 export default {
   name: 'DynamicViewLoader',
   props: {
@@ -30,7 +31,8 @@ export default {
         input: Input,
         textarea: Textarea,
         select: Select,
-        checkbox: Checkbox
+        checkbox: Checkbox,
+        unRegister:UnRegister
       }
     }
     return rtn
@@ -47,7 +49,7 @@ export default {
     },
     renderView () {
     //   return () => import(`${this.path}`)
-      return this.components[this.type]
+      return this.components[this.type] || this.components['unRegister']
     }
   }
 }
