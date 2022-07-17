@@ -25,7 +25,7 @@ const routes = [
         meta: {
           title: '示例表格'
         },
-        component: () => import(/* webpackChunkName: "tableDemo" */ '../views/demo/index.vue')
+        component: () => import(/* webpackChunkName: "tableDemo" */ '../views/demo/tableDemo.vue')
       },
       {
         path: '/404',
