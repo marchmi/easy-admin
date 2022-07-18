@@ -23,9 +23,17 @@ const routes = [
         path: '/tableDemo',
         name: 'tableDemo',
         meta: {
-          title: '示例表格'
+          title: '表格示例'
         },
-        component: () => import(/* webpackChunkName: "tableDemo" */ '../views/demo/tableDemo.vue')
+        component: () => import(/* webpackChunkName: "tableDemo" */ '../views/demo/tableDemo')
+      },
+      {
+        path: '/filterDemo',
+        name: 'filterDemo',
+        meta: {
+          title: '筛选条件示例'
+        },
+        component: () => import(/* webpackChunkName: "filterDemo" */ '../views/demo/filterDemo')
       },
       {
         path: '/404',

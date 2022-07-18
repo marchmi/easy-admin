@@ -13,6 +13,7 @@ import Textarea from './async-components/textarea'
 import Select from './async-components/select'
 import Checkbox from './async-components/checkbox'
 import Image from './async-components/image'
+import DatePicker from './async-components/datePicker'
 import UnRegister from './async-components/unregister.vue'
 export default {
   name: 'DynamicViewLoader',
@@ -34,6 +35,7 @@ export default {
         select: Select,
         checkbox: Checkbox,
         image: Image,
+        datePicker: DatePicker,
         unRegister:UnRegister
       }
     }

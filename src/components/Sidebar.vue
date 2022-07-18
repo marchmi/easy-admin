@@ -50,7 +50,11 @@ export default {
                 subs: [
                     {
                         index: "/tableDemo",
-                        title: "示例表格",
+                        title: "表格示例",
+                    },
+                    {
+                        index: "/filterDemo",
+                        title: "筛选条件示例",
                     },
                 ]
             }
