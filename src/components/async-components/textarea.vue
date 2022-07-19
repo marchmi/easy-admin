@@ -16,6 +16,13 @@ export default {
     data: {
       type: [String, Number],
       default: ''
+    },
+
+    options: {
+      type: [Array, String, Object],
+      default: () => {
+        return []
+      }
     }
   },
 
