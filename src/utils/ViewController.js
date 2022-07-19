@@ -75,11 +75,9 @@ export class ViewController {
       rtn.fields = this.fields
       rtn.config = this.config
       rtn.views = this.views
-      rtn.attrs = this.attrs
-      rtn.events = this.events
+      rtn.attrs = this.attrs // 记录配置文件中的attrs信息
+      rtn.events = this.events // 记录配置文件中的events信息
       rtn.dynamicElementData = {} // 用于记录动态获取的选项数据
-      rtn.fieldsAttrs = {} // 用于记录当前视图中相关字段的attrs
-      rtn.fieldsEvents = {} // 用于记录当前视图中相关字段的events
       return rtn
     }
 
@@ -105,9 +103,51 @@ export class ViewController {
     }
 
     /**
+     * 获取字段对应视图元素需要的一些属性
+     * @param {String|Array} _viewFieldsList 
+     * @param {String|undefined|Object} _viewFieldsAttr 
+     * @returns 
+     */
+    getFieldsAttrs(_viewFieldsList = 'filterFields', _viewFieldsAttr = undefined){
+      const { views, fields , attrs } = this
+      const viewFields = variablesUtil.isArray(_viewFieldsList) ? _viewFieldsList : (views[_viewFieldsList] || [])
+      const fieldsAttrs = variablesUtil.isObject(_viewFieldsAttr) ? _viewFieldsAttr : (variablesUtil.isUndefined(_viewFieldsAttr) ? attrs : attrs[_viewFieldsAttr])
+      const rtn = {}
+      viewFields.forEach(fieldName => {
+        const fieldConfig = fields[fieldName] || {}
+        const assignConfig = fieldsAttrs[fieldName] || {}
+        rtn[fieldName] = {...Object.assign(fieldConfig, assignConfig)}
+        delete rtn[fieldName].type
+        delete rtn[fieldName].label
+      })
+      return rtn
+    }
+
+     /**
+     * 获取字段对应视图元素需要的一些事件信息
+     * @param {String|Array} _viewFieldsList 
+     * @param {String|undefined|Object} _viewFieldsAttr 
+     * @returns 
+     */
+      getFieldsEvents(_viewFieldsList = 'filterFields', _viewFieldsEvent = undefined){
+        const { views , events } = this
+        const viewFields = variablesUtil.isArray(_viewFieldsList) ? _viewFieldsList : (views[_viewFieldsList] || [])
+        const fieldsEvents = variablesUtil.isObject(_viewFieldsEvent) ? _viewFieldsEvent : (variablesUtil.isUndefined(_viewFieldsEvent) ? events : events[_viewFieldsEvent])
+        const rtn = {}
+        viewFields.forEach(fieldName => {
+          rtn[fieldName] = {}
+          const eventConfig = fieldsEvents[fieldName] || {}
+          Object.keys(eventConfig).forEach(eventName=>{
+            rtn[fieldName][eventName] = this[eventConfig[eventName]]
+          })
+        })
+        return rtn
+      }
+
+    /**
      * 在vue实例中通过call调用 根据配置信息生成校验规则
      * @param {String：用于指定字段集合在配置中的配置项名称 || Array：为字段集合列表} _fieldsName
-     * @param {Object：指定不使用默认规则时，字段为空的提示语句 {fieldName：提示语句}} _fieldRequiredNotice
+     * @param {Object：指定不使用默认规则时，字段值为空时的提示语句 {fieldName：提示语句}} _fieldRequiredNotice
      * @param {String：使用哪一个配置项赋值校验规则,默认用于从fields配置项的对应字段中读取校验规则，rulesInField为false时则用config中的对应配置获取校验规则} _rules
      * @param {Boolean：是否从fields对应字段配置中获取校验规则，默认为true} rulesInField
      * @returns

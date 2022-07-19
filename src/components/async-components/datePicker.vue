@@ -3,6 +3,7 @@
     <el-date-picker
       v-model="val"
       type="date"
+      v-bind="$attrs"
     />
   </div>
 </template>
@@ -10,7 +11,7 @@
 export default {
   props: {
     data: {
-      type: [String, Number],
+      type: [String, Number, Date],
       default: ''
     }
   },

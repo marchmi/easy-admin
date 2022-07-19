@@ -13,7 +13,7 @@ export default {
 
     tableDemo: {
 
-      attrs: { // 分为按字段配置和按视图配置
+      attrs: { // 分为按字段配置和按视图配置，一般用于配置字段视图原生支持的属性，如placeholder、size等
         demoField1: {},
         demoField2: {},
         demoView1: {
@@ -30,7 +30,7 @@ export default {
         // 写一个转换方法，结合对应的字段配置项返回一个配置信息数组 [{ field: fieldName, filter: filterName || null, path: path || null , slot: true } ,...]
         tableFields: ['carouselUrl', 'redirectUrl', 'carouselRank', 'createTime'],
 
-        tableFieldsAttr: { // 在要增加或者不使用fields中配置的某些属性时,对一些字段的属性进行声明
+        tableFieldsAttr: { // 在要增加或者不使用fields中配置的某些属性时,对一些字段的属性进行声明，一般用于配置视图组件非原生支持的属性
           carouselUrl: {
             type: 'image', // 将carouselUrl的type重新定义为image,在需要使用
             dynamic: true // 在表格中时，配置此项表示要使用DynamicViewLoader加载组件展示数据,DynamicViewLoader内部会根据字段的type决定加载哪一个组件

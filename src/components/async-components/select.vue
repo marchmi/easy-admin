@@ -6,6 +6,7 @@
         :key="item.value"
         :label="item[labelKey]"
         :value="item[valueKey]"
+        v-bind="$attrs"
       >
       </el-option>
     </el-select>

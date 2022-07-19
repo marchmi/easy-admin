@@ -128,4 +128,7 @@ export default {
   .el-card.is-always-shadow {
     min-height: 100%!important;
   }
+  .page-container .el-card {
+    margin-bottom: 20px;
+  }
 </style>
