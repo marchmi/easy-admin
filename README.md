@@ -8,7 +8,7 @@ git clone https://github.com/marchmi/easy-admin.git
 cd easy-admin
 npm install         // npm install --legacy-peer-deps
 
-// 开启服务器，浏览器访问 http://localhost:8080
+// 开启服务器，浏览器访问 http://localhost:3000
 npm run dev
 
 // 构建
