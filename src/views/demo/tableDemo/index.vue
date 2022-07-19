@@ -81,7 +81,7 @@
 
 import { onBeforeMount, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ViewController , formatValue } from '@/utils/ViewController'
-import DynamicViewLoader from '@/components/DynamicViewLoader'
+import DynamicViewLoader from '@/components/DynamicViewLoader.vue'
 import filter from '@/mixins/filter' // 引入filter方法，在后面使用mixins注入
 
 import configMap from './configMap'

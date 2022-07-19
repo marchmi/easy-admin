@@ -8,12 +8,12 @@
   </div>
 </template>
 <script>
-import Input from './async-components/input'
-import Textarea from './async-components/textarea'
-import Select from './async-components/select'
-import Checkbox from './async-components/checkbox'
-import Image from './async-components/image'
-import DatePicker from './async-components/datePicker'
+import Input from './async-components/input.vue'
+import Textarea from './async-components/textarea.vue'
+import Select from './async-components/select.vue'
+import Checkbox from './async-components/checkbox.vue'
+import Image from './async-components/image.vue'
+import DatePicker from './async-components/datePicker.vue'
 import UnRegister from './async-components/unregister.vue'
 export default {
   name: 'DynamicViewLoader',

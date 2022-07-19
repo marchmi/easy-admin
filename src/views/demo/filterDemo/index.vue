@@ -48,7 +48,7 @@
 
 import { onBeforeMount, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ViewController } from '@/utils/ViewController'
-import DynamicViewLoader from '@/components/DynamicViewLoader'
+import DynamicViewLoader from '@/components/DynamicViewLoader.vue'
 
 import configMap from './configMap'
 
