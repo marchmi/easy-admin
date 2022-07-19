@@ -108,6 +108,49 @@
         <div>{{`当前搜索条件：${JSON.stringify(ruleFilterViewData)}`}}</div>
       </div>
     </el-card>
+  <!-- 根据配置信息获取选项数据 -->
+    <el-card>
+      <h5 class="demo-title">拓展用例：根据配置信息获取选项数据</h5>
+      <div class="filter-wrap">
+        <el-form
+          ref="optionFilter"
+          :inline="true"
+          :model="optionFilterViewData"
+          size="small"
+          class="searchbar"
+          :validate-on-rule-change="false"
+          :rules="viewController.getFieldsRules.call(this,'filterFields',{bookSn:'请填写书籍编号再查询'})"
+        >
+          <el-form-item
+            v-for="field in optionFilterViewFields"
+            :key="`optionFilter${field.name}`"
+            :prop="field.name"
+            :label="field.label"
+          >
+            <dynamic-view-loader
+              v-model:data="optionFilterViewData[field.name]"
+              :options="optionData[field.name]"
+              :type="field.type"
+              v-bind="fieldsAttrs[field.name]"
+              v-on="fieldsEvents[field.name]"
+            ></dynamic-view-loader>
+          </el-form-item>
+          <el-form-item class="btn">
+            <el-button
+              type="primary"
+              size="medium"
+            >
+              查询</el-button
+            >
+            <el-button
+              size="medium"
+              >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+        <div>{{`当前搜索条件：${JSON.stringify(optionFilterViewData)}`}}</div>
+      </div>
+    </el-card>
   </el-card>
 </template>
 
@@ -131,6 +174,7 @@ export default {
 
     const state = reactive({
       filterViewFields: viewController.getViewFieldsConfig('filterFields', 'filterFieldsAttr'), // 搜索表单中的字段信息
+      optionFilterViewFields: viewController.getViewFieldsConfig('filterFields', 'optionFilterFieldsAttr'), // 搜索表单中的字段信息
       viewController, // 控制类
       filterViewData: {}, // 记录基础搜索条件的值
       attrFilterViewData: {}, // 记录动态绑定事件和属性的搜索条件的值
@@ -151,6 +195,9 @@ export default {
   created(){
     this.fieldsAttrs = this.viewController.getFieldsAttrs.call(this,'filterFields') // 获取属性
     this.fieldsEvents = this.viewController.getFieldsEvents.call(this,'filterFields','filter') // 获取事件
+    this.optionData = {
+      categories: [ {code:1,name:'人文社科'},{code:2,name:'建筑施工'} ]
+    }
   },
   methods: {
     // 测试事件绑定

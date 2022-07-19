@@ -3,7 +3,7 @@
     <el-select v-model="val" v-bind="$attrs">
       <el-option
         v-for="item in options"
-        :key="item.value"
+        :key="item[labelKey]"
         :label="item[labelKey]"
         :value="item[valueKey]"
         v-bind="$attrs"

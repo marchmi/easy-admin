@@ -77,8 +77,20 @@ export class ViewController {
       rtn.views = this.views
       rtn.attrs = this.attrs // 记录配置文件中的attrs信息
       rtn.events = this.events // 记录配置文件中的events信息
-      rtn.dynamicElementData = {} // 用于记录动态获取的选项数据
+      rtn.dynamicElementData = {} // 用于记录动态获取的选项数据，通过接口或者方法获取的动态选项数据和从配置文件中获取的静态选项数据,原始选项数据
+      rtn.optionData = {} // 选项数据，从dynamicElementData映射选项数据过来，可以基于dynamicElementData写一些option数据动态变化的逻辑
       return rtn
+    }
+
+    /**
+     * 从选项配置文件中获取当前页面相关的选项数据
+     * @param {选项配置表} optionMap 
+     * @param {当前所需选项配置表} optionMap 
+     * @param {*} pageName 
+     */
+    getStaticOptionDataToDynamicElementData(optionMap={},mergeConfig={},pageName){
+
+      // 往dynamicElementData写入数据时也需要向optionData中写入数据
     }
 
     /**
@@ -96,7 +108,7 @@ export class ViewController {
         const fieldConfig = fields[fieldName] || {}
         // 针对table中有特殊展示需求的字段配置信息，如poster: { label: '轮播图' , slot: 'image' } 一般table中默认展示文本，这里需要使用image控件展示数据，切label变更为轮播图
         const assignConfig = fieldsAttrs[fieldName] || {}
-        return Object.assign(fieldConfig, assignConfig, {name:fieldName}) // {type: 'imageUploader', label: '轮播图' , slot: 'image'} // 最终生成一个在table中展示时需要的有效配置信息对象
+        return {...Object.assign(fieldConfig, assignConfig, {name:fieldName})} // {type: 'imageUploader', label: '轮播图' , slot: 'image'} // 最终生成一个在table中展示时需要的有效配置信息对象
       })
 
       return rtn

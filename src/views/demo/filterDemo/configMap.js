@@ -42,8 +42,12 @@ export default {
 
         filterFields: [ 'bookSn' , 'bookName' , 'categories' , 'createTime' ],
         filterFieldsAttr:{
+        },
+        optionFilterFieldsAttr: {
+          categories:{
+            type: 'select'
+          }
         }
-
       },
 
       dynamicElementDataFetches: {
