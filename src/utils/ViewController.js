@@ -2,6 +2,9 @@
  * author: zhoushiming
  * createTime: 2022-07-15 15:53:01
  */
+ import { optionsDataStore } from '@/store/optionsDataStore'
+ const optionsStore = optionsDataStore()
+
 export class VariablesUtil {
   isNumber (num) {
     return typeof num === 'number'
@@ -83,14 +86,37 @@ export class ViewController {
     }
 
     /**
-     * 从选项配置文件中获取当前页面相关的选项数据
-     * @param {选项配置表} optionMap 
-     * @param {当前所需选项配置表} optionMap 
+     * 从选项配置文件中获取当前页面相关的选项数据 在vue实例中通过call调用
      * @param {*} pageName 
+     * @param {选项配置表} optionMap 
+     * @param {当前所需选项配置表} mergeConfig {type|options:用来表明一些字段需要从选项配置表中拉取数据，active:可能存在一个属性有多个配置项,只取一部分，或者选项的顺序需要变化}
      */
-    getStaticOptionDataToDynamicElementData(optionMap={},mergeConfig={},pageName){
-
+    getStaticOptionDataToDynamicElementData(pageName,optionMap={},mergeConfig={}){
+      const { dynamicElementData , optionData , fields , views } = this
+      const currPageOptions = optionMap[pageName]
+      const merges = variablesUtil.isObject(mergeConfig)?mergeConfig:(views[mergeConfig]||{})
+      console.log(fields)
       // 往dynamicElementData写入数据时也需要向optionData中写入数据
+      Object.keys(fields).map(name=>{
+        let mergeFieldAttrs = {...Object.assign(fields[name],merges[name]||{})}
+        if(mergeFieldAttrs.type==='select'||mergeFieldAttrs.options){
+          // 向dynamicElementData写入数据,忽略
+          if(mergeConfig._sys){
+            dynamicElementData[name] = optionMap[_sys][name]||{}
+          }else{
+            dynamicElementData[name] = currPageOptions[name]||{}
+          }
+          // 生成最终的选项数据
+          optionData[name] = []
+          Object.keys(dynamicElementData[name]).forEach(key=>{
+            if(!mergeFieldAttrs.active){
+              optionData[name].push({name:dynamicElementData[name][key],code:key})
+            }else if(mergeFieldAttrs.active.includes(key)){
+              optionData[name].push({name:dynamicElementData[name][key],code:key})
+            }
+          })
+        }
+      })
     }
 
     /**
@@ -105,9 +131,9 @@ export class ViewController {
       const fieldsAttrs = variablesUtil.isObject(_viewFieldsAttr) ? _viewFieldsAttr : (views[_viewFieldsAttr] || {})
       const rtn = viewFields.map(fieldName => {
         // 从fields配置中获取到的字段配置信息 ，如poster: { type: 'imageUploader', label: '上传轮播图' } 这是编写的基础配置信息,表示用该字段在form中的视图是一个图片上传控件
-        const fieldConfig = fields[fieldName] || {}
+        const fieldConfig = {...(fields[fieldName] || {})}
         // 针对table中有特殊展示需求的字段配置信息，如poster: { label: '轮播图' , slot: 'image' } 一般table中默认展示文本，这里需要使用image控件展示数据，切label变更为轮播图
-        const assignConfig = fieldsAttrs[fieldName] || {}
+        const assignConfig = {...(fieldsAttrs[fieldName] || {})}
         return {...Object.assign(fieldConfig, assignConfig, {name:fieldName})} // {type: 'imageUploader', label: '轮播图' , slot: 'image'} // 最终生成一个在table中展示时需要的有效配置信息对象
       })
 
@@ -155,6 +181,35 @@ export class ViewController {
         })
         return rtn
       }
+    
+    /**
+     * 在vue的实例中通过call调用
+     * 处理动态获取的选项数据
+     * @param {需要动态获取选项数据的字段集合} _optionNameArr
+     * @param {参数集合对象，传递给实例中定义的方法} _options
+     */
+     fetchDynamicData (_optionNameArr = [], _options = {}) {
+      const { config } = this
+      const { dynamicElementDataFetches } = config
+      // eslint-disable-next-line array-callback-return
+      _optionNameArr.map(option => {
+        if (dynamicElementDataFetches[option]) {
+          const { interPath, dataHandler, storeState } = dynamicElementDataFetches[option]
+          const optionsData = optionsStore.dynamicElementData[option]
+          if (storeState && optionsData) { // 处理在vuex中存值的选项数据,已经有值了就
+            this.dynamicElementData[option] = optionsData
+            return null
+          }
+          if (interPath) {
+            // handleFetchData(option, interPath)
+          } else if (dataHandler) {
+            this[dataHandler]?this[dataHandler]({ ..._options, storeState }):console.log(`未定义获取选项数据的方法${dataHandler}`)
+          }
+        } else {
+          console.log(`没有字段${option}的选项数据获取配置`)
+        }
+      })
+    }
 
     /**
      * 在vue实例中通过call调用 根据配置信息生成校验规则

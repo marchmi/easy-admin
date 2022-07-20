@@ -17,7 +17,7 @@
 
     选项数据中存在全局通用的动态数据，即请求一次后全局通用，这类数据可结合pinia做缓存
  */
-export const SelectOptionsMap = {
+export default {
   // 配置全局的选项数据
   _sys: {
     sex: {

@@ -7,7 +7,8 @@ export default {
       // 对于各视图中不同的属性信息，在views中使用配置项分别配置，如在table中【字段A】文本展示为轮播图，在form中为上传轮播图，则可在views视图中额外声明一个对象，对label属性额外声明
       bookSn: { type: 'input', label: '书籍编号' , placeholder: '输入书籍编号搜索' , rules:['required','snRule'] },
       bookName: { type: 'input', label: '书籍名称' , placeholder: '输入书籍名称搜索' , rules:['nameRule'] },
-      categories: { type: 'input', label: '书籍分类' , placeholder: '选择书籍分类搜索' },
+      categories: { type: 'select', label: '书籍分类' , placeholder: '选择书籍分类搜索' },
+      status: { type: 'select', label: '书籍状态' },
       createTime: { type: 'datePicker', label: '创建时间' }
     },
 
@@ -40,7 +41,7 @@ export default {
 
       views: {
 
-        filterFields: [ 'bookSn' , 'bookName' , 'categories' , 'createTime' ],
+        filterFields: [ 'bookSn' , 'bookName' , 'categories' , 'createTime' , 'status' ],
         filterFieldsAttr:{
         },
         optionFilterFieldsAttr: {
@@ -51,6 +52,10 @@ export default {
       },
 
       dynamicElementDataFetches: {
+        categories: {
+          dataHandler: 'handleGetCategoriesOptionsData',
+          storeState: true
+        },
       }
 
     }

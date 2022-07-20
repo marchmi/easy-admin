@@ -160,8 +160,10 @@ import { onBeforeMount, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ViewController } from '@/utils/ViewController'
 import DynamicViewLoader from '@/components/DynamicViewLoader.vue'
 import rule from './rule'
+import mixins from './mixins'
 
 import configMap from './configMap'
+import selectMap from '@/const/select'
 
 export default {
   name: 'filterDemo',
@@ -191,13 +193,14 @@ export default {
       ...toRefs(state)
     }
   },
-  mixins:[rule],
+  mixins:[rule,mixins],
   created(){
     this.fieldsAttrs = this.viewController.getFieldsAttrs.call(this,'filterFields') // 获取属性
     this.fieldsEvents = this.viewController.getFieldsEvents.call(this,'filterFields','filter') // 获取事件
-    this.optionData = {
-      categories: [ {code:1,name:'人文社科'},{code:2,name:'建筑施工'} ]
-    }
+    this.viewController.getStaticOptionDataToDynamicElementData.call(this,this.$route.name,selectMap) // 获取所有的选项值
+    // this.viewController.getStaticOptionDataToDynamicElementData.call(this,this.$route.name,selectMap,{status:{active:['1','2']}}) // 第三个字段是一个额外配置项，可指定字段只获取部分静态选项值
+    this.viewController.fetchDynamicData.call(this, ['categories'])
+    console.log(this.dynamicElementData)
   },
   methods: {
     // 测试事件绑定
