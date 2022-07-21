@@ -129,7 +129,7 @@
           >
             <dynamic-view-loader
               v-model:data="optionFilterViewData[field.name]"
-              :options="optionData[field.name]"
+              :options="optionData[field.name]||dynamicElementData[field.name]"
               :type="field.type"
               v-bind="fieldsAttrs[field.name]"
               v-on="fieldsEvents[field.name]"
@@ -200,7 +200,7 @@ export default {
     this.viewController.getStaticOptionDataToDynamicElementData.call(this,this.$route.name,selectMap) // 获取所有的选项值
     // this.viewController.getStaticOptionDataToDynamicElementData.call(this,this.$route.name,selectMap,{status:{active:['1','2']}}) // 第三个字段是一个额外配置项，可指定字段只获取部分静态选项值
     this.viewController.fetchDynamicData.call(this, ['categories'])
-    console.log(this.dynamicElementData)
+    console.log(this.dynamicElementData,this.optionData)
   },
   methods: {
     // 测试事件绑定

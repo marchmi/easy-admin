@@ -45,6 +45,10 @@ export class VariablesUtil {
   isArray (arr) {
     return Object.prototype.toString.call(arr) === '[object Array]'
   }
+
+  isEmptyObject (o) {
+    return Object.keys(o).length === 0
+  }
 }
 
 const variablesUtil = new VariablesUtil()
@@ -197,6 +201,7 @@ export class ViewController {
           const { interPath, dataHandler, storeState } = dynamicElementDataFetches[option]
           const optionsData = optionsStore.dynamicElementData[option]
           if (storeState && optionsData) { // 处理在vuex中存值的选项数据,已经有值了就
+            this.optionData[option] = optionsData
             this.dynamicElementData[option] = optionsData
             return null
           }
