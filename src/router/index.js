@@ -36,6 +36,14 @@ const routes = [
         component: () => import(/* webpackChunkName: "filterDemo" */ '../views/demo/filterDemo')
       },
       {
+        path: '/componentDemo',
+        name: 'componentDemo',
+        meta: {
+          title: '组件示例'
+        },
+        component: () => import(/* webpackChunkName: "componentDemo" */ '../views/demo/componentDemo')
+      },
+      {
         path: '/404',
         name: '404',
         meta: {

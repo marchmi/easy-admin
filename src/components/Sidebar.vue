@@ -56,6 +56,10 @@ export default {
                         index: "/filterDemo",
                         title: "筛选条件示例",
                     },
+                    {
+                        index: "/componentDemo",
+                        title: "组件示例",
+                    },
                 ]
             }
         ];
