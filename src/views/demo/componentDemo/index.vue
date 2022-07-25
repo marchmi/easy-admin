@@ -1,9 +1,26 @@
 <template>
   <el-card class="page-container is-always-shadow">
+    <!-- 分页组件 -->
     <el-card>
       <h5 class="demo-title">二次封装：分页组件</h5>
       <div class="demo-content">{{`通过callback处理后的第${pagination.currentPage}数据：${JSON.stringify(list)}`}}</div>
       <Pagination :pagination="pagination" @current-change="(val) => { handleCurrentChange(val,updateRes) }" />
+    </el-card>
+    <!-- Descriptions面板 -->
+     <el-card>
+      <h5 class="demo-title">二次封装：Descriptions面板</h5>
+      <div class="demo-content">{{`二次封装的Descriptions面板，可通过default、slot、dynamic三种形式指定展现形式`}}</div>
+      <Descriptions v-bind="Descriptions">
+        <template #extra>
+          <el-button size="mini" type="primary">{{`插槽插入一个操作`}}</el-button>
+        </template>
+        <template #title>
+          <span>{{`插槽插入一个Title`}}</span>
+        </template>
+        <template v-slot:slot1> 在页面调用时使用
+          <el-descriptions-item :label="slotProps.label" v-bind="slotProps.attrs||{}">{{slotProps.content}}</el-descriptions-item>
+        </template>
+      </Descriptions>
     </el-card>
   </el-card>
 </template>
@@ -12,21 +29,25 @@
 import { defineComponent } from 'vue'
 
 import Pagination from '@/components/Pagination'
+import Descriptions from '@/components/Descriptions'
 
 import PaginationMix from '@/mixins/Pagination'
+import DescriptionsMix from '@/mixins/Descriptions'
 
 export default defineComponent({
   name:'componentDemo',
   
   components:{
-    Pagination
+    Pagination,
+    Descriptions
   },
 
-  mixins: [ PaginationMix ],
+  mixins: [ PaginationMix , DescriptionsMix ],
 
   props: {},
 
   created(){
+    // 这个方法定义在PaginationMix
     this.handleCurrentChange(1,this.updateRes)
   },
 
