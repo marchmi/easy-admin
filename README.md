@@ -13,6 +13,11 @@ npm run dev
 
 // 构建
 npm run build
+
+// 记录下制作文档可使用的技术和一些参考资料
+https://v2.vuepress.vuejs.org/zh/
+如何在文档中使用组件
+https://blog.csdn.net/sinat_31213021/article/details/119385175
 ```
 
 ## License
